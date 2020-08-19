@@ -1,0 +1,3 @@
+{
+  "mongoURI": "mongodb+srv://ari123:ari123@rescuercluster.5x5uf.mongodb.net/RescuerApp?retryWrites=true&w=majority"
+}
