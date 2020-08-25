@@ -11,12 +11,12 @@ const ProfileSchema = new mongoose.Schema({
     type: Boolean
   },
 
-  title1: {
+  primaryStatus: {
     required: true,
     type: String
   },
 
-  title2: {
+  secondaryStatus: {
     type: String
   },
 
@@ -26,6 +26,11 @@ const ProfileSchema = new mongoose.Schema({
 
   otherStationsWorked: {
     type: [String]
+  },
+
+  aboutMe: {
+    type: String,
+    required: true
   },
 
   FireServiceTraining: [
@@ -45,6 +50,9 @@ const ProfileSchema = new mongoose.Schema({
       state: {
         type: String,
         required: true
+      },
+      completion: {
+        type: Date
       }
     }
   ],
@@ -76,6 +84,10 @@ const ProfileSchema = new mongoose.Schema({
   },
   instagram: {
     type: String
+  },
+  date: {
+    type: Date,
+    default: Date.now
   }
 });
 
