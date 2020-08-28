@@ -195,7 +195,7 @@ router.put(
     FireServiceTrainingToAdd.academy = academy;
     FireServiceTrainingToAdd.city = city;
     FireServiceTrainingToAdd.state = state;
-    FireServiceTrainingToAdd.completion = completion;
+    if (completion) FireServiceTrainingToAdd.completion = completion;
 
     try {
       const profileToUpdate = await Profile.findOne({
@@ -211,4 +211,112 @@ router.put(
   }
 );
 
+///add Formal Training
+
+router.put(
+  "/addformaleducation",
+  [
+    authorize,
+    [
+      check("school", "Must Include Name of School")
+        .not()
+        .isEmpty(),
+      check("degree", "Must Include Type of Degree")
+        .not()
+        .isEmpty(),
+      check("major", "Must Include Concentration")
+        .not()
+        .isEmpty(),
+      check("city", "Must Include City")
+        .not()
+        .isEmpty()
+    ]
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    //destructuring the req
+    const {
+      school,
+      degree,
+      major,
+      city,
+      state,
+      completionYear,
+      currentlyEnrolled
+    } = req.body;
+
+    const FormalEducationToAdd = {};
+    FormalEducationToAdd.school = school;
+    FormalEducationToAdd.degree = degree;
+    if (major) FormalEducationToAdd.major = major;
+    FormalEducationToAdd.city = city;
+    FormalEducationToAdd.state = state;
+    if (completionYear) FormalEducationToAdd.completionYear = completionYear;
+    FormalEducationToAdd.currentlyEnrolled = currentlyEnrolled;
+
+    try {
+      const profileToUpdate = await Profile.findOne({
+        rescuer: req.rescuer.id
+      });
+      profileToUpdate.FormalEducation.unshift(FormalEducationToAdd);
+      await profileToUpdate.save();
+      res.json(profileToUpdate);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Issues with Server adding Training");
+    }
+  }
+);
+
+//delete academy training
+router.delete(
+  "/deletefireservicetraining/:trainingId",
+  authorize,
+  async (req, res) => {
+    try {
+      profileToEdit = await Profile.findOne({ rescuer: req.rescuer.id });
+      const trainingIndexToDelete = profileToEdit.FireServiceTraining.map(
+        i => i.id
+      ).indexOf(req.params.trainingId);
+      //this takes care of what happens if you try to delete the same item twice, and the index reverts to -1 (in which case it just removes an element )
+      if (trainingIndexToDelete == -1) {
+        return res.json({ msg: "nothing to delete" });
+      }
+      profileToEdit.FireServiceTraining.splice(trainingIndexToDelete, 1);
+      //edit the FireService Training array...remove one element at the "trainingIndexToDelete" index;
+      await profileToEdit.save();
+      res.json(profileToEdit.FireServiceTraining);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Issues with Server deleting Training");
+    }
+  }
+);
+//delete formal education
+router.delete(
+  "/deleteformaleducation/:educationId",
+  authorize,
+  async (req, res) => {
+    try {
+      profileToEdit = await Profile.findOne({ rescuer: req.rescuer.id });
+      const educationIndexToDelete = profileToEdit.FormalEducation.map(
+        e => e.id
+      ).indexOf(req.params.educationId);
+      console.log(educationIndexToDelete);
+      if (educationIndexToDelete == -1) {
+        return res.json({ msg: "nothing to delete" });
+      }
+      profileToEdit.FormalEducation.splice(educationIndexToDelete, 1);
+      await profileToEdit.save();
+      res.json(profileToEdit.FormalEducation);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Issues with Server deleting Education");
+    }
+  }
+);
 module.exports = router;

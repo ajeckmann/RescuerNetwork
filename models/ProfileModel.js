@@ -70,11 +70,20 @@ const ProfileSchema = new mongoose.Schema({
       major: {
         type: String
       },
+      city: {
+        type: String,
+        required: true
+      },
+      state: {
+        type: String,
+        required: true
+      },
       completionYear: {
         type: String
       },
       currentlyEnrolled: {
-        type: Boolean
+        type: Boolean,
+        required: true
       }
     }
   ],
