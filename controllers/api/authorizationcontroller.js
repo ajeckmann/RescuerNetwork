@@ -17,10 +17,12 @@ router.get("/", authorize, async (req, res) => {
     const rescuer = await Rescuer.findById(req.rescuer.id).select("-password");
     console.log(req.rescuer);
     console.log(req.rescuer.id);
-    res.json(rescuer);
+    console.log(rescuer);
+    return res.json(rescuer);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Issue with server");
+
+    return res.status(400).json({ msg: "can't load rescuer" });
   }
 });
 

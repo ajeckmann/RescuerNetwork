@@ -39,6 +39,9 @@ router.post(
         .isEmpty(),
       check("primaryStatus", "Must select a primary status")
         .not()
+        .isEmpty(),
+      check("aboutMe", "Must Write Something")
+        .not()
         .isEmpty()
     ]
   ],
@@ -53,12 +56,13 @@ router.post(
       primaryStatus,
       secondaryStatus,
       baseStation,
-      otherStationsWorked,
+      otherStationsWorkedArray,
       aboutMe,
       facebook,
       instagram
     } = req.body;
 
+    let rescuerToFind = await Rescuer.findById(req.rescuer.id);
     //object with all the data from the request, to then be passed into the new instance.
     const ProfileData = {};
     ProfileData.rescuer = req.rescuer.id;
@@ -66,14 +70,17 @@ router.post(
     ProfileData.primaryStatus = primaryStatus;
     if (secondaryStatus) ProfileData.secondaryStatus = secondaryStatus;
     if (baseStation) ProfileData.baseStation = baseStation;
-    if (otherStationsWorked)
-      ProfileData.otherStationsWorked = otherStationsWorked;
+    if (otherStationsWorkedArray)
+      ProfileData.otherStationsWorked = otherStationsWorkedArray;
     if (aboutMe) ProfileData.aboutMe = aboutMe;
     if (facebook) ProfileData.facebook = facebook;
     if (instagram) ProfileData.instagram = instagram;
+    ProfileData.rescuerFirstName = rescuerToFind.firstname;
+    ProfileData.rescuerLastName = rescuerToFind.lastname;
 
     try {
       //check for presence of profile
+
       let profileToFind = await Profile.findOne({ rescuer: req.rescuer.id });
       if (profileToFind) {
         updatedProfile = await Profile.findOneAndUpdate(

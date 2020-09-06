@@ -6,6 +6,10 @@ const ProfileSchema = new mongoose.Schema({
     ref: "rescuer"
   },
 
+  rescuerFirstName: {
+    type: String
+  },
+
   isActive: {
     required: true,
     type: Boolean
@@ -31,6 +35,16 @@ const ProfileSchema = new mongoose.Schema({
   aboutMe: {
     type: String,
     required: true
+  },
+  facebook: {
+    type: String
+  },
+  instagram: {
+    type: String
+  },
+  date: {
+    type: Date,
+    default: Date.now
   },
 
   FireServiceTraining: [
@@ -86,18 +100,7 @@ const ProfileSchema = new mongoose.Schema({
         required: true
       }
     }
-  ],
-
-  facebook: {
-    type: String
-  },
-  instagram: {
-    type: String
-  },
-  date: {
-    type: Date,
-    default: Date.now
-  }
+  ]
 });
 
 module.exports = Profile = mongoose.model("profile", ProfileSchema);

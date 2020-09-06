@@ -1,5 +1,6 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
+const authorize = require("../../middleware/authorize");
 const jwt = require("jsonwebtoken");
 const config = require("config");
 
@@ -32,6 +33,7 @@ router.post(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      // console.log(errors );
       return res.status(400).json({ bodyErrors: errors.array() });
     }
 
@@ -91,5 +93,16 @@ router.post(
     //encrypt the password
   }
 );
+
+//get all rescuers
+router.get("/allrescuers", [authorize], async (req, res) => {
+  try {
+    const allRescuers = await Rescuer.find().sort({ lastname: -1 });
+    return res.json(allRescuers);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
 
 module.exports = router;
