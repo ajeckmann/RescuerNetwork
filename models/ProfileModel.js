@@ -77,7 +77,7 @@ const ProfileSchema = new mongoose.Schema({
         type: String,
         required: true
       },
-      degree: {
+      degreeType: {
         type: String,
         required: true
       },

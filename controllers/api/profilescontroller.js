@@ -124,10 +124,12 @@ router.get("/:rescuer_id", async (req, res) => {
   try {
     const profileToFetch = await Profile.findOne({
       rescuer: req.params.rescuer_id
-    }).populate("rescuer", ["firstname", "lastname"]);
+    }).populate("rescuer", ["firstname", "lastname", "dateofbirth", "email"]);
 
     if (!profileToFetch) {
-      return res.status(400).json({ msg: "Cannot Find Profile for Rescuer" });
+      res
+        .status(400)
+        .json({ errors: [{ msg: "can't find profile for rescuer" }] });
     }
     res.json(profileToFetch);
   } catch (err) {
@@ -248,7 +250,7 @@ router.put(
     //destructuring the req
     const {
       school,
-      degree,
+      degreeType,
       major,
       city,
       state,
@@ -258,7 +260,7 @@ router.put(
 
     const FormalEducationToAdd = {};
     FormalEducationToAdd.school = school;
-    FormalEducationToAdd.degree = degree;
+    FormalEducationToAdd.degreeType = degreeType;
     if (major) FormalEducationToAdd.major = major;
     FormalEducationToAdd.city = city;
     FormalEducationToAdd.state = state;

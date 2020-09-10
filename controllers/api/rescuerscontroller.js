@@ -105,4 +105,22 @@ router.get("/allrescuers", [authorize], async (req, res) => {
   }
 });
 
+//get rescuer by id
+router.get("/:rescuer_id", authorize, async (req, res) => {
+  //add authorize as a second paramater...this will make this function execute before the third parameter. It will ensure that the token actualy is a valid token
+  try {
+    const rescuer = await Rescuer.findById(req.params.rescuer_id).select(
+      "-password"
+    );
+    console.log(req.rescuer);
+    console.log(req.rescuer.id);
+    console.log(rescuer);
+    return res.json(rescuer);
+  } catch (err) {
+    console.error(err.message);
+
+    return res.status(400).json({ msg: "can't load rescuer" });
+  }
+});
+
 module.exports = router;
